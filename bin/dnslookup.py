@@ -67,30 +67,30 @@ def cache_lookup(input,search_type):
 
 @Configuration()
 class DnslookupCommand(StreamingCommand):
-    """ %(synopsis)
+    """ This allows custom dns requests to select servers from splunk
 
     ##Syntax
 
     .. code-block::
         dnslookup  (recordtype=<string>) (input_field=<string>) | (output_field=<string>) | (search_suffix=<string>)*
-                    
+
     ##Description
 
-    This streaming command resolves the host/ip or other string in from 
-    input_field in the data and outputs to output_field using the 
+    This streaming command resolves the host/ip or other string in from
+    input_field in the data and outputs to output_field using the
     custom server and search suffix provided.
 
     ##Example
 
-    This example resolves the name "www" using the first domain in the suffix 
+    This example resolves the name "www" using the first domain in the suffix
     list (google.com), and using the name servers in the server list.
 
     ..code-block::
-            "| makeresults 
+            "| makeresults
              | eval hostname = "www",
                ip = "4.2.2.2",
                _raw = "www.google.com,4.2.2.2"
-             | dnslookup recordtype="FORWARD" input_field=hostname 
+             | dnslookup recordtype="FORWARD" input_field=hostname
                output_field="xyz"  search_suffix="google.com,yahoo.com
                server=8.8.8.8,8.8.4.4""
     """
@@ -98,7 +98,7 @@ class DnslookupCommand(StreamingCommand):
         doc='''
         **Syntax:** **recordtype=** *A|PTR|forward|reverse|MX*
         **Description:** Type of dns record being requested''',
-        require=True, validate=validators.Fieldname())
+        require=True, validate=validators.Set("FORWARD","REVERSE","PTR","A","AAAA","CNAME"), default="A")
     input_field = Option(
         doc='''
         **Syntax:** **input_field=** *<fieldname>*
